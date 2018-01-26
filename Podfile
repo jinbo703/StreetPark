@@ -6,6 +6,10 @@ target 'StreetPark' do
   use_frameworks!
 
   # Pods for StreetPark
-  pod 'JHTAlertController'
 
+  pod 'AFNetworking'
+  pod 'Networking'
+  pod 'SVProgressHUD'
+  pod 'SDWebImage/WebP'
+  
 end

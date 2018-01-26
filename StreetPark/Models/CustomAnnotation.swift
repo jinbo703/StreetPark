@@ -11,12 +11,12 @@ import CoreLocation
 import MapKit
 
 class CustomAnnotation: MKPointAnnotation {
-    var img_spot: UIImage?
+    var img_spot_url: String?
     var timeFlag: Int?
     
     init(info: SpotInfo) {
         super.init()
         timeFlag = info.spot_timeFlag
-        img_spot = info.spot_image
+        img_spot_url = info.spot_image_url
     }
 }
