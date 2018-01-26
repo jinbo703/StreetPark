@@ -12,18 +12,18 @@ class SpotInfo: NSObject {
 
     var spot_lat: Double?
     var spot_lon: Double?
-    var spot_image: UIImage?
+    var spot_image_url: String?
     var spot_timeFlag: Int?
     
-    init(dictionary: [String: AnyObject]) {
+    init(dictionary: NSDictionary) {
         super.init()
         
-        spot_lat = dictionary["spot_lat"] as? Double
-        spot_lon = dictionary["spot_lon"] as? Double
-        spot_timeFlag = dictionary["spot_timeFlag"] as? Int
+        spot_lat = (dictionary["lat"] as? NSString)?.doubleValue
+        spot_lon = (dictionary["lon"] as? NSString)?.doubleValue
+        spot_timeFlag = dictionary["flag"] as? Int
         
         // convert NSData to image here
-        spot_image = dictionary["spot_image"] as? UIImage       
+        spot_image_url = dictionary["photo"] as? String
         
     }
 }

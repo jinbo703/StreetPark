@@ -43,7 +43,8 @@ let FONTSIZE18: CGFloat = GAP10 * 1.8
 let FONTSIZE19: CGFloat = GAP10 * 1.9
 let FONTSIZE20: CGFloat = GAP10 * 2.0
 
-
+//
+let REFRESHTIME = 30
 
 
 

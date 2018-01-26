@@ -9,6 +9,8 @@
 import UIKit
 import CoreLocation
 import MapKit
+import Networking
+import SDWebImage
 
 class Utility {
     class func convertCLLocationDistanceToMiles ( targetDistance : CLLocationDistance?) -> CLLocationDistance {
@@ -73,7 +75,7 @@ class HomeViewController: UIViewController {
     var img_spot: UIImageView = {
         let img = UIImageView()
         img.contentMode = .scaleAspectFill
-        img.backgroundColor = UIColor.gray
+        img.backgroundColor = UIColor.lightGray
         return img
     }()
     
@@ -85,70 +87,125 @@ class HomeViewController: UIViewController {
         return btn
     }()
     
+    lazy var btn_user : UIButton = {
+        let btn = UIButton(type: .system)
+        let img = UIImage(named: "trackMe")
+        btn.setImage(img, for: .normal)
+        btn.addTarget(self, action: #selector(centerMapOnUserButtonClicked), for: .touchUpInside)
+        btn.backgroundColor = UIColor.white
+        return btn
+    }()
+    
     var currentLocation: CLLocation?
     var spot_Mark: MKPlacemark?
     var swipeViewTopConstraint: NSLayoutConstraint?
     var locationManager = CLLocationManager()
     var spotInfos = [SpotInfo]()
-//    let dictionary:[[String: AnyObject]] = [["spot_lat": 39.62866 as AnyObject, "spot_lon": 116.321019 as AnyObject, "spot_timeFlag": 1 as AnyObject],
-//                                            ["spot_lat": 39.63066 as AnyObject, "spot_lon": 116.318019 as AnyObject, "spot_timeFlag": 1 as AnyObject],
-//                                            ["spot_lat": 39.63266 as AnyObject, "spot_lon": 116.321019 as AnyObject, "spot_timeFlag": 1 as AnyObject],
-//                                            ["spot_lat": 39.62866 as AnyObject, "spot_lon": 116.317019 as AnyObject, "spot_timeFlag": 1 as AnyObject],
-//                                            ["spot_lat": 39.62266 as AnyObject, "spot_lon": 116.315019 as AnyObject, "spot_timeFlag": 3 as AnyObject],
-//                                            ["spot_lat": 39.64666 as AnyObject, "spot_lon": 116.325019 as AnyObject, "spot_timeFlag": 3 as AnyObject],
-//                                            ["spot_lat": 39.63166 as AnyObject, "spot_lon": 116.317019 as AnyObject, "spot_timeFlag": 2 as AnyObject],
-//                                            ["spot_lat": 39.62966 as AnyObject, "spot_lon": 116.327019 as AnyObject, "spot_timeFlag": 2 as AnyObject],
-//                                            ["spot_lat": 39.62966 as AnyObject, "spot_lon": 116.328019 as AnyObject, "spot_timeFlag": 3 as AnyObject],
-//                                            ["spot_lat": 39.62866 as AnyObject, "spot_lon": 116.308019 as AnyObject, "spot_timeFlag": 3 as AnyObject]]
-    
-    let dictionary:[[String: AnyObject]] = [["spot_lat": 3.130134 as AnyObject, "spot_lon": 101.721735 as AnyObject, "spot_timeFlag": 1 as AnyObject],
-                                            ["spot_lat": 3.120134 as AnyObject, "spot_lon": 101.709735 as AnyObject, "spot_timeFlag": 1 as AnyObject],
-                                            ["spot_lat": 3.138134 as AnyObject, "spot_lon": 101.722735 as AnyObject, "spot_timeFlag": 1 as AnyObject],
-                                            ["spot_lat": 3.118134 as AnyObject, "spot_lon": 101.702735 as AnyObject, "spot_timeFlag": 1 as AnyObject],
-                                            ["spot_lat": 3.133134 as AnyObject, "spot_lon": 101.709735 as AnyObject, "spot_timeFlag": 3 as AnyObject],
-                                            ["spot_lat": 3.134134 as AnyObject, "spot_lon": 101.712735 as AnyObject, "spot_timeFlag": 3 as AnyObject],
-                                            ["spot_lat": 3.117134 as AnyObject, "spot_lon": 101.715735 as AnyObject, "spot_timeFlag": 2 as AnyObject],
-                                            ["spot_lat": 3.131134 as AnyObject, "spot_lon": 101.719335 as AnyObject, "spot_timeFlag": 2 as AnyObject],
-                                            ["spot_lat": 3.120134 as AnyObject, "spot_lon": 101.720135 as AnyObject, "spot_timeFlag": 3 as AnyObject],
-                                            ["spot_lat": 3.135134 as AnyObject, "spot_lon": 101.723335 as AnyObject, "spot_timeFlag": 3 as AnyObject]]
+    var loadFlag = false
+    var timer_location : Timer?
+    var timerFlag = true
     
     
+    //MARK:-- ViewDidLoad
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationController?.navigationBar.isHidden = true
         
-        self.getAnotations()
         self.loadMapView()
         self.setupViews()
         self.initializeViews()
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        self.timerFlag = true
+        self.startLocationUpdating()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
         
     }
     
-    private func getAnotations() {
+    override func viewDidDisappear(_ animated: Bool) {
+        
+    }
+    
+    func stopTimer() {
+        if let timer = self.timer_location {
+            timer.invalidate()
+        }
+        self.timer_location = nil
+    }
+    
+    func RTUpdate(location: CLLocation) {
+        
+        self.getAnotations(location: location)
+        self.timer_location = Timer.scheduledTimer(timeInterval: TimeInterval(REFRESHTIME), target: self, selector: #selector(startLocationUpdating), userInfo: nil, repeats: true)
+       
+    }
+    
+    @objc func startLocationUpdating() {
+        self.locationManager.delegate = self
+        self.locationManager.stopUpdatingLocation()
+        self.locationManager.requestLocation()
+        self.locationManager.startUpdatingLocation()
+    }
+    
+    func stopLocationUpdating(){
+        self.locationManager.stopUpdatingLocation()
+        self.locationManager.delegate = nil
+    }
+    
+    private func getAnotations(location: CLLocation) {
         
         checkNetwork()
         
-        // fetch to the server for annotations
-        
-        
-        
-        // get the spotInfos here
-        self.spotInfos.removeAll()
-        
-        for temp in dictionary {
-            let spot = SpotInfo.init(dictionary: temp)
-            self.spotInfos.append(spot)
+        if timerFlag {
+            // fetch to the server for annotations
+            
+            let paramDic = ["latitude": location.coordinate.latitude,
+                            "longitude": location.coordinate.longitude]
+            
+            API?.executeHTTPRequest(Post, url: GETSPOTS_URL, parameters: paramDic, completionHandler: { (responseDic) in
+                
+                if let response = responseDic {
+                    self.parseDic(responseDic: response)
+                }
+                
+            }, errorHandler: { (error) in
+                if error != nil {
+                    print("Network Error ---> ", error ?? "")
+                }
+            })
         }
+    }
+    
+    private func parseDic(responseDic: [AnyHashable: Any]) {
         
-        self.addAnnotations()
-        
+        let status = responseDic["status"] as! String
+        if status == "SUCCESS" {
+            // get the spotInfos here
+            self.spotInfos.removeAll()
+            if let pinArray = (responseDic["pin"] as? NSArray) as? [NSDictionary] {
+                DispatchQueue.main.async {
+                    for temp in pinArray {
+                        let tempSpot = SpotInfo(dictionary: temp)
+                        self.spotInfos.append(tempSpot)
+                    }
+                    
+                    self.addAnnotations()
+                }
+            }
+        }else {
+            print("Failed")
+        }        
     }
     
     private func addAnnotations() {
+        
+        let allAnnotations = self.mapView.annotations
+        self.mapView.removeAnnotations(allAnnotations)
+        
         for temp in self.spotInfos {
             
             if let lat = temp.spot_lat, let lon = temp.spot_lon {
@@ -156,24 +213,6 @@ class HomeViewController: UIViewController {
                 annotation.coordinate = CLLocationCoordinate2D(latitude: lat, longitude: lon)
                 self.mapView.addAnnotation(annotation)
             }
-            
-//            if let lat = temp.spot_lat, let lon = temp.spot_lon {
-//                let spot = CLLocation(latitude: lat, longitude: lon)
-//                CLGeocoder().reverseGeocodeLocation(spot, completionHandler: { (placemarks, error) in
-//                    if error != nil {
-//                        print(error ?? "")
-//                    }
-//                    if let clPlacemarks = placemarks {
-//                        let spotPlace = clPlacemarks[0]
-//                        let placemark: MKPlacemark = MKPlacemark(placemark: spotPlace)
-//                        let annotation = CustomAnnotation()
-//                        annotation.coordinate = placemark.coordinate
-////                        annotation.image = temp.spot_image
-//
-//                        self.mapView.addAnnotation(annotation)
-//                    }
-//                })
-//            }
         }
     }
     
@@ -183,6 +222,10 @@ class HomeViewController: UIViewController {
         
         view.addSubview(mapView)
         _ = mapView.anchor(view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: GAP70, rightConstant: 0, widthConstant: 0, heightConstant: 0)
+        mapView.center = view.center
+        
+        view.addSubview(btn_user)
+        _ = btn_user.anchor(self.mapView.topAnchor, left: self.mapView.leftAnchor, bottom: nil, right: nil, topConstant: GAP50, leftConstant: GAP05, bottomConstant: 0, rightConstant: 0, widthConstant: GAP40, heightConstant: GAP40)
         
         view.addSubview(btn_markSpot)
         _ = btn_markSpot.anchor(nil, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, topConstant: 0, leftConstant: 0.5 * GAP30, bottomConstant: 0.5 * GAP30, rightConstant: 0.5 * GAP30, widthConstant: 0, heightConstant: GAP40)
@@ -197,7 +240,7 @@ class HomeViewController: UIViewController {
         img_swipeIndicator.centerXAnchor.constraint(equalTo: swipeView.centerXAnchor).isActive = true
         
         view.addSubview(btn_cancel)
-        _ = btn_cancel.anchor(swipeView.topAnchor, left: nil, bottom: nil, right: swipeView.rightAnchor, topConstant: GAP20, leftConstant: 0, bottomConstant: 0, rightConstant: GAP20, widthConstant: GAP20, heightConstant: GAP20)
+        _ = btn_cancel.anchor(swipeView.topAnchor, left: nil, bottom: nil, right: swipeView.rightAnchor, topConstant: GAP20, leftConstant: 0, bottomConstant: 0, rightConstant: GAP20, widthConstant: GAP30, heightConstant: GAP30)
         
         view.addSubview(lbl_address)
         _ = lbl_address.anchor(swipeView.topAnchor, left: swipeView.leftAnchor, bottom: nil, right: swipeView.rightAnchor, topConstant: GAP20, leftConstant: 0.5 * GAP30, bottomConstant: 0, rightConstant: GAP60, widthConstant: 0, heightConstant: GAP20)
@@ -210,8 +253,6 @@ class HomeViewController: UIViewController {
         
         view.addSubview(img_spot)
         _ = img_spot.anchor(btn_direction.bottomAnchor, left: swipeView.leftAnchor, bottom: nil, right: swipeView.rightAnchor, topConstant: GAP05, leftConstant: GAP10, bottomConstant: 0, rightConstant: GAP10, widthConstant: 0, heightConstant: 2.5 * GAP100)
-        
-        
     }
 
     private func initializeViews() {
@@ -221,23 +262,64 @@ class HomeViewController: UIViewController {
         customMaskWith(object: btn_cancel, radious: GAP10, borderWidth: nil, borderColor: nil)
         customMaskWith(object: btn_direction, radious: GAP05, borderWidth: nil, borderColor: nil)
         customMaskWith(object: img_spot, radious: GAP10, borderWidth: nil, borderColor: nil)
+        customMaskWith(object: btn_user, radious: GAP05, borderWidth: nil, borderColor: nil)
         
         let swipeUp = UISwipeGestureRecognizer(target: self, action: #selector(handleSwipeGesture(gesture:)))
         swipeUp.direction = UISwipeGestureRecognizerDirection.up
         let swipeDown = UISwipeGestureRecognizer(target: self, action: #selector(handleSwipeGesture(gesture:)))
         swipeDown.direction = UISwipeGestureRecognizerDirection.down
         self.swipeView.addGestureRecognizer(swipeUp)
-        self.swipeView.addGestureRecognizer(swipeDown)
-        
+        self.swipeView.addGestureRecognizer(swipeDown)        
     }
     
     func checkNetwork() {
         if !Reachability.isConnectedToNetwork(){
-            self.showJHTAlerttOkayWithIcon(message: "Connection Error!\nPlease check your internet connection")
+//            self.showJHTAlerttOkayWithIcon(message: "Connection Error!\nPlease check your internet connection")
             return
         }
     }
 }
+
+//MARK:-- CLLocationManager
+extension HomeViewController: CLLocationManagerDelegate {
+    
+    private func loadMapView() {
+        
+        locationManager = CLLocationManager()
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        locationManager.requestAlwaysAuthorization()
+        locationManager.requestWhenInUseAuthorization()
+        
+        mapView.delegate = self
+        mapView.showsUserLocation = true
+        mapView.isUserInteractionEnabled = true
+        mapView.showsCompass = true
+        mapView.showsScale = true
+        mapView.showsTraffic = true
+        mapView.showsBuildings = true
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if let location = locations.last {
+            self.currentLocation = location
+            self.stopLocationUpdating()
+            self.stopTimer()
+            self.RTUpdate(location: location)
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print("Location Error --->" , error)
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        if status != .authorizedAlways {
+            self.locationManager.requestAlwaysAuthorization()
+            self.locationManager.requestLocation()
+        }
+    }
+}
+
 
 //MARK:-- MapviewDelegate Methods
 extension HomeViewController: MKMapViewDelegate {
@@ -259,22 +341,17 @@ extension HomeViewController: MKMapViewDelegate {
             annotationView?.annotation = annotation_custom
         }
         
-        annotationView?.isDraggable = true
-        annotationView?.animatesDrop = true
-        
         if annotation_custom.timeFlag == 1 {
             annotationView?.pinTintColor = UIColor.green
         }else if annotation_custom.timeFlag == 2 {
             annotationView?.pinTintColor = UIColor.yellow
         }else if annotation_custom.timeFlag == 3 {
             annotationView?.pinTintColor = UIColor.red
+        }else {
+            annotationView?.pinTintColor = UIColor.brown
         }
         
         return annotationView
-    }
-    
-    func mapViewDidFinishLoadingMap(_ mapView: MKMapView) {
-        
     }
     
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
@@ -294,7 +371,10 @@ extension HomeViewController: MKMapViewDelegate {
             }
         }
         
+        self.timerFlag = false
+        
         // get address or street of selected annotation
+        
         if let sp_cood = view.annotation?.coordinate {
             self.mapView.centerCoordinate = sp_cood
             let spot_location = CLLocation(latitude: sp_cood.latitude, longitude: sp_cood.longitude)
@@ -306,112 +386,47 @@ extension HomeViewController: MKMapViewDelegate {
                 if let placeMarkers = clPlaceMarkers {
                     let spotPlace = placeMarkers[0]
                     self.spot_Mark = MKPlacemark(placemark: spotPlace)
-                    print("This is the placeMark info --->", self.spot_Mark?.description ?? "")
                     self.lbl_address.text = self.spot_Mark?.title?.components(separatedBy: ",").first
                 }
             })
             
             let distance = Utility.convertCLLocationDistanceToMiles(targetDistance: self.currentLocation?.distance(from: spot_location))
-            self.lbl_distance.text = String(format: "%.1f mile", distance)
+            self.lbl_distance.text = String(format: "%.3f mile", distance)
         }
-        
-        
-        
-        let annotation_custom = view.annotation as! CustomAnnotation
-//        self.img_spot.image = annotation_custom.image
-        
-        if annotation_custom.timeFlag == 1 {
-            self.img_spot.backgroundColor = UIColor.green
-        }else if annotation_custom.timeFlag == 2 {
-            self.img_spot.backgroundColor = UIColor.yellow
-        }else if annotation_custom.timeFlag == 3 {
-            self.img_spot.backgroundColor = UIColor.red
+       
+        let custom_anno = view.annotation as! CustomAnnotation
+        if let photoUrl = custom_anno.img_spot_url {
+            
+            self.img_spot.sd_addActivityIndicator()
+            self.img_spot.sd_setImage(with: URL(string: photoUrl), completed: nil)
+            
         }
     }
-    
-    func mapView(_ mapView: MKMapView, didChange mode: MKUserTrackingMode, animated: Bool) {
-        
-        switch mode.rawValue {
-        case 0:
-            DispatchQueue.main.async {
-                mapView.setUserTrackingMode(.followWithHeading, animated: false)
-            }
-            break
-        case 1:
-            DispatchQueue.main.async {
-                mapView.setUserTrackingMode(.followWithHeading, animated: false)
-            }
-            break
-        default:
-            break
-        }
-    }
-    
-    func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, didChange newState: MKAnnotationViewDragState, fromOldState oldState: MKAnnotationViewDragState) {
-        switch newState {
-        case .starting:
-            view.dragState = .dragging
-        case .ending, .canceling:
-            view.dragState = .none
-        default: break
-        }
-    }
-    
 
-    
+    func mapViewDidFinishLoadingMap(_ mapView: MKMapView) {
+        
+        if !loadFlag {
+            loadFlag = true
+            if let location = self.currentLocation {
+                let center = CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
+                let span = MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+                let region = MKCoordinateRegion(center: center, span: span)
+                self.mapView.setRegion(region, animated: false)
+                self.mapView.setUserTrackingMode(.follow, animated: true)
+            }
+        }
+        
+    }
 }
 
-//MARK:-- CLLocationManager
-extension HomeViewController: CLLocationManagerDelegate {
-    
-    private func loadMapView() {
-        
-        locationManager = CLLocationManager()
-        locationManager.delegate = self
-        locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        locationManager.requestAlwaysAuthorization()
-        locationManager.requestWhenInUseAuthorization()
-        
-        if (CLLocationManager.locationServicesEnabled()) {
-            locationManager.requestLocation()
-            locationManager.startUpdatingLocation()
-        }
-        
-        mapView.delegate = self
-        mapView.showsUserLocation = true
-        mapView.isUserInteractionEnabled = true
-        mapView.showsCompass = true
-        mapView.showsScale = true
-        mapView.showsTraffic = true
-        mapView.showsBuildings = true
-//        mapView.userTrackingMode = .followWithHeading
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        if let location = locations.last {
-            self.currentLocation = location
-            let center = CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
-            let span = MKCoordinateSpanMake(0.03, 0.03)
-            let region = MKCoordinateRegion(center: center, span: span)
-            self.mapView.setRegion(region, animated: true)
-        }
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print("Location Error --->" , error)
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        if status != .authorizedAlways {
-            self.locationManager.requestAlwaysAuthorization()
-            self.locationManager.requestLocation()
-        }
-    }
-}
 
 //MARK:-- handles
 
 extension HomeViewController {
+    
+    @objc func centerMapOnUserButtonClicked() {
+        mapView.setUserTrackingMode(MKUserTrackingMode.follow, animated: true)
+    }
     
     @objc func handleSwipeGesture(gesture: UIGestureRecognizer) {
         if let swipeGesture = gesture as? UISwipeGestureRecognizer {
@@ -438,37 +453,22 @@ extension HomeViewController {
         UIView.animate(withDuration: 0.5) {
             self.swipeViewTopConstraint?.constant = 0
             self.view.layoutIfNeeded()
-            let allAnnotations = self.mapView.annotations
-            self.mapView.removeAnnotations(allAnnotations)
         }
         
-        // reload mapview
+        self.timerFlag = true
         
+        if let location = self.currentLocation {
+            
+            self.getAnotations(location: location)
+        }
     }
     
     @objc func handleDirections() {
-//        if let lat = spot_coordinate?.latitude, let lon = spot_coordinate?.longitude {
-//            let spot = CLLocation(latitude: lat, longitude: lon)
-//            CLGeocoder().reverseGeocodeLocation(spot, completionHandler: { (clPlaceMarkers, error) in
-//                if error != nil {
-//                    print(error ?? "Error occurs")
-//                }
-//
-//                if let placeMarkers = clPlaceMarkers {
-//                    let spotPlace = placeMarkers[0]
-//                    let spotMark: MKPlacemark = MKPlacemark(placemark: spotPlace)
-//                    let mapItem = MKMapItem(placemark: spotMark)
-//                    let launchOption = [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving]
-//                    mapItem.openInMaps(launchOptions: launchOption)
-//                }
-//            })
-//        }
         
         if let mark = self.spot_Mark {
             let mapItem = MKMapItem(placemark: mark)
             let launchOption = [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving]
             mapItem.openInMaps(launchOptions: launchOption)
-            
         }
     }
     
@@ -510,9 +510,11 @@ extension HomeViewController: UIImagePickerControllerDelegate, UINavigationContr
     func noCamera() {
         
         let str_message = "Sorry, this device has no camera"
-        
-        showJHTAlerttOkayWithIcon(message: str_message)
-        
+        let str_title = "Warning"
+        let alert = UIAlertController(title: str_title, message: str_message, preferredStyle: .alert)
+        let okeyAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+        alert.addAction(okeyAction)
+        self.present(alert, animated: true, completion: nil)        
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {

@@ -15,12 +15,16 @@
 		074DBE7A2018C74000CFFC89 /* GlobalFunction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 074DBE782018C74000CFFC89 /* GlobalFunction.swift */; };
 		074DBE7E2018C75400CFFC89 /* CustomAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 074DBE7C2018C75400CFFC89 /* CustomAnnotation.swift */; };
 		074DBE7F2018C75400CFFC89 /* SpotInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 074DBE7D2018C75400CFFC89 /* SpotInfo.swift */; };
-		074DBE812018C76900CFFC89 /* Alerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 074DBE802018C76900CFFC89 /* Alerts.swift */; };
 		074DBE832018C76D00CFFC89 /* StyleGuideManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 074DBE822018C76D00CFFC89 /* StyleGuideManager.swift */; };
 		074DBE852018C77400CFFC89 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 074DBE842018C77400CFFC89 /* Reachability.swift */; };
 		074DBE872018C78200CFFC89 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 074DBE862018C78200CFFC89 /* AppDelegate.swift */; };
 		074DBE892018C78C00CFFC89 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 074DBE882018C78C00CFFC89 /* HomeViewController.swift */; };
 		074DBE8B2018C79000CFFC89 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 074DBE8A2018C79000CFFC89 /* DetailViewController.swift */; };
+		07C4C80F2019636D00407DE1 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07C4C80E2019636D00407DE1 /* MapKit.framework */; };
+		07C4C812201A3D3E00407DE1 /* Extension+UIImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C4C811201A3D3E00407DE1 /* Extension+UIImageView.swift */; };
+		07C4C816201A3DB600407DE1 /* APIManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 07C4C815201A3DB600407DE1 /* APIManager.m */; };
+		07C4C81A201A453800407DE1 /* APIConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C4C819201A453800407DE1 /* APIConstants.swift */; };
+		07C4C81C201A460100407DE1 /* GlobalUrl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C4C81B201A460100407DE1 /* GlobalUrl.swift */; };
 		379B96CF41F130A52409807B /* Pods_StreetPark.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EF0F7AE0B5C4205EE9BDA398 /* Pods_StreetPark.framework */; };
 /* End PBXBuildFile section */
 
@@ -35,12 +39,19 @@
 		074DBE782018C74000CFFC89 /* GlobalFunction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlobalFunction.swift; sourceTree = "<group>"; };
 		074DBE7C2018C75400CFFC89 /* CustomAnnotation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomAnnotation.swift; sourceTree = "<group>"; };
 		074DBE7D2018C75400CFFC89 /* SpotInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpotInfo.swift; sourceTree = "<group>"; };
-		074DBE802018C76900CFFC89 /* Alerts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Alerts.swift; sourceTree = "<group>"; };
 		074DBE822018C76D00CFFC89 /* StyleGuideManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StyleGuideManager.swift; sourceTree = "<group>"; };
 		074DBE842018C77400CFFC89 /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		074DBE862018C78200CFFC89 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		074DBE882018C78C00CFFC89 /* HomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		074DBE8A2018C79000CFFC89 /* DetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
+		07C4C80E2019636D00407DE1 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		07C4C811201A3D3E00407DE1 /* Extension+UIImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Extension+UIImageView.swift"; sourceTree = "<group>"; };
+		07C4C813201A3DB600407DE1 /* APIConstant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIConstant.h; sourceTree = "<group>"; };
+		07C4C814201A3DB600407DE1 /* APIManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIManager.h; sourceTree = "<group>"; };
+		07C4C815201A3DB600407DE1 /* APIManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = APIManager.m; sourceTree = "<group>"; };
+		07C4C817201A3F1500407DE1 /* StreetPark-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "StreetPark-Bridging-Header.h"; sourceTree = "<group>"; };
+		07C4C819201A453800407DE1 /* APIConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APIConstants.swift; sourceTree = "<group>"; };
+		07C4C81B201A460100407DE1 /* GlobalUrl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalUrl.swift; sourceTree = "<group>"; };
 		7042CD5E8559BB364F466E90 /* Pods-StreetPark.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-StreetPark.debug.xcconfig"; path = "Pods/Target Support Files/Pods-StreetPark/Pods-StreetPark.debug.xcconfig"; sourceTree = "<group>"; };
 		A414A4230D0B1BF7AD1645CD /* Pods-StreetPark.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-StreetPark.release.xcconfig"; path = "Pods/Target Support Files/Pods-StreetPark/Pods-StreetPark.release.xcconfig"; sourceTree = "<group>"; };
 		EF0F7AE0B5C4205EE9BDA398 /* Pods_StreetPark.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_StreetPark.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -51,6 +62,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				07C4C80F2019636D00407DE1 /* MapKit.framework in Frameworks */,
 				379B96CF41F130A52409807B /* Pods_StreetPark.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -96,7 +108,7 @@
 			children = (
 				074DBE822018C76D00CFFC89 /* StyleGuideManager.swift */,
 				074DBE842018C77400CFFC89 /* Reachability.swift */,
-				074DBE7B2018C74500CFFC89 /* WebService */,
+				07C4C810201A3D2500407DE1 /* WebService */,
 				074DBE762018C73600CFFC89 /* Global */,
 				074DBE712018C72200CFFC89 /* Extensions */,
 			);
@@ -115,7 +127,6 @@
 		074DBE6F2018C71400CFFC89 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				074DBE802018C76900CFFC89 /* Alerts.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -132,6 +143,7 @@
 		074DBE712018C72200CFFC89 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				07C4C811201A3D3E00407DE1 /* Extension+UIImageView.swift */,
 				074DBE722018C73200CFFC89 /* Extension+UIColor.swift */,
 				074DBE732018C73200CFFC89 /* Extension+UIView.swift */,
 			);
@@ -143,13 +155,19 @@
 			children = (
 				074DBE772018C74000CFFC89 /* LocalConstants.swift */,
 				074DBE782018C74000CFFC89 /* GlobalFunction.swift */,
+				07C4C81B201A460100407DE1 /* GlobalUrl.swift */,
 			);
 			path = Global;
 			sourceTree = "<group>";
 		};
-		074DBE7B2018C74500CFFC89 /* WebService */ = {
+		07C4C810201A3D2500407DE1 /* WebService */ = {
 			isa = PBXGroup;
 			children = (
+				07C4C819201A453800407DE1 /* APIConstants.swift */,
+				07C4C813201A3DB600407DE1 /* APIConstant.h */,
+				07C4C814201A3DB600407DE1 /* APIManager.h */,
+				07C4C815201A3DB600407DE1 /* APIManager.m */,
+				07C4C817201A3F1500407DE1 /* StreetPark-Bridging-Header.h */,
 			);
 			path = WebService;
 			sourceTree = "<group>";
@@ -166,6 +184,7 @@
 		80CEBCB2B62D9E1A98D226FD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				07C4C80E2019636D00407DE1 /* MapKit.framework */,
 				EF0F7AE0B5C4205EE9BDA398 /* Pods_StreetPark.framework */,
 			);
 			name = Frameworks;
@@ -206,7 +225,12 @@
 				TargetAttributes = {
 					074DBE572018C5AC00CFFC89 = {
 						CreatedOnToolsVersion = 9.2;
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
+						SystemCapabilities = {
+							com.apple.Maps.iOS = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -281,11 +305,19 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-StreetPark/Pods-StreetPark-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/JHTAlertController/JHTAlertController.framework",
+				"${BUILT_PRODUCTS_DIR}/AFNetworking/AFNetworking.framework",
+				"${BUILT_PRODUCTS_DIR}/Networking/Networking.framework",
+				"${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework",
+				"${BUILT_PRODUCTS_DIR}/SVProgressHUD/SVProgressHUD.framework",
+				"${BUILT_PRODUCTS_DIR}/libwebp/libwebp.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JHTAlertController.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AFNetworking.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Networking.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDWebImage.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SVProgressHUD.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/libwebp.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -303,13 +335,16 @@
 				074DBE872018C78200CFFC89 /* AppDelegate.swift in Sources */,
 				074DBE752018C73200CFFC89 /* Extension+UIView.swift in Sources */,
 				074DBE7F2018C75400CFFC89 /* SpotInfo.swift in Sources */,
+				07C4C816201A3DB600407DE1 /* APIManager.m in Sources */,
 				074DBE792018C74000CFFC89 /* LocalConstants.swift in Sources */,
 				074DBE7A2018C74000CFFC89 /* GlobalFunction.swift in Sources */,
 				074DBE832018C76D00CFFC89 /* StyleGuideManager.swift in Sources */,
+				07C4C812201A3D3E00407DE1 /* Extension+UIImageView.swift in Sources */,
 				074DBE852018C77400CFFC89 /* Reachability.swift in Sources */,
 				074DBE742018C73200CFFC89 /* Extension+UIColor.swift in Sources */,
-				074DBE812018C76900CFFC89 /* Alerts.swift in Sources */,
+				07C4C81A201A453800407DE1 /* APIConstants.swift in Sources */,
 				074DBE7E2018C75400CFFC89 /* CustomAnnotation.swift in Sources */,
+				07C4C81C201A460100407DE1 /* GlobalUrl.swift in Sources */,
 				074DBE892018C78C00CFFC89 /* HomeViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -441,13 +476,16 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = AHA5JS655T;
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = KYRE73USW7;
 				INFOPLIST_FILE = StreetPark/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = caesar.StreetPark;
+				PRODUCT_BUNDLE_IDENTIFIER = com.realyfe.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE = "4c851fc2-6276-4b08-82e6-30e8933ceb57";
+				PROVISIONING_PROFILE_SPECIFIER = ReaLyfe_provision;
+				SWIFT_OBJC_BRIDGING_HEADER = "StreetPark/Helpers/WebService/StreetPark-Bridging-Header.h";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -459,13 +497,16 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = AHA5JS655T;
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = KYRE73USW7;
 				INFOPLIST_FILE = StreetPark/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = caesar.StreetPark;
+				PRODUCT_BUNDLE_IDENTIFIER = com.realyfe.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE = "4c851fc2-6276-4b08-82e6-30e8933ceb57";
+				PROVISIONING_PROFILE_SPECIFIER = ReaLyfe_provision;
+				SWIFT_OBJC_BRIDGING_HEADER = "StreetPark/Helpers/WebService/StreetPark-Bridging-Header.h";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
