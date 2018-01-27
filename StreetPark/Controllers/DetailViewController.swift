@@ -35,11 +35,8 @@ class DetailViewController: UIViewController {
         return btn
     }()
     
-    lazy var btn_user : UIButton = {
-        let btn = UIButton(type: .system)
-        let img = UIImage(named: "trackMe")
-        btn.setImage(img, for: .normal)
-        btn.addTarget(self, action: #selector(centerMapOnUserButtonClicked), for: .touchUpInside)
+    var btn_user : MKUserTrackingButton = {
+        let btn = MKUserTrackingButton()
         btn.backgroundColor = UIColor.white
         return btn
     }()
@@ -66,7 +63,8 @@ class DetailViewController: UIViewController {
         _ = mapView.anchor(view.topAnchor, left: view.leftAnchor, bottom: view.centerYAnchor, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
         
         view.addSubview(btn_user)
-        _ = btn_user.anchor(nil, left: nil, bottom: self.mapView.bottomAnchor, right: self.mapView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: GAP20, rightConstant: GAP05, widthConstant: GAP40, heightConstant: GAP40)
+        _ = btn_user.anchor(nil, left: nil, bottom: self.mapView.bottomAnchor, right: self.mapView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: GAP20, rightConstant: GAP05, widthConstant: GAP50, heightConstant: GAP50)
+        btn_user.mapView = self.mapView
         
         self.view.addSubview(img_spot)
         _ = img_spot.anchor(view.centerYAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, topConstant: 0.5 * GAP30, leftConstant: 0.5 * GAP30, bottomConstant: GAP70, rightConstant: 0.5 * GAP30, widthConstant: 0, heightConstant: 0)
@@ -82,12 +80,24 @@ class DetailViewController: UIViewController {
     private func loadMapView() {
         
         mapView.delegate = self
-        mapView.showsUserLocation = true
         mapView.isUserInteractionEnabled = true
+        mapView.showsUserLocation = true
         mapView.showsCompass = true
         mapView.showsScale = true
         mapView.showsTraffic = true
         mapView.showsBuildings = true
+    }
+    
+    func checkNetwork() {
+        if !Reachability.isConnectedToNetwork(){
+            let str_title = "Warning"
+            let str_message = "Connection Error!\nPlease check your internet connection"
+            let alert = UIAlertController(title: str_title, message: str_message, preferredStyle: .alert)
+            let okaction = UIAlertAction(title: "Ok", style: .default, handler: nil)
+            alert.addAction(okaction)
+            self.present(alert, animated: true, completion: nil)
+            return
+        }
     }
     
     func resizeImage(image: UIImage) -> UIImage {
@@ -97,7 +107,7 @@ class DetailViewController: UIViewController {
         let maxWidth: Float = Float(DEVICE_WIDTH) / 2
         var imgRatio: Float = actualWidth / actualHeight
         let maxRatio: Float = maxWidth / maxHeight
-        let compressionQuality: Float = 0.5
+        let compressionQuality: Float = 1.0
         //50 percent compression
         
         if actualHeight > maxHeight || actualWidth > maxWidth {
@@ -131,13 +141,9 @@ class DetailViewController: UIViewController {
 
 extension DetailViewController {
     
-    @objc func centerMapOnUserButtonClicked() {
-        if let cood = self.spotLocation {
-            mapView.setCenter(cood, animated: true)
-        }
-    }
-    
     @objc func handlePostSpot() {
+        
+        self.checkNetwork()
         
         if let userId = UIDevice.current.identifierForVendor?.uuidString {
             self.userIdentifier = userId
@@ -147,7 +153,7 @@ extension DetailViewController {
             
             SVProgressHUD.show()
             
-            let spotImage = UIImageJPEGRepresentation(resizeImage(image: self.img_spot.image!), 0.25)?.base64EncodedString(options: .lineLength64Characters)
+            let spotImage = UIImageJPEGRepresentation(resizeImage(image: self.img_spot.image!), 1.0)?.base64EncodedString(options: .lineLength64Characters)
             
             let timeStamp = Int(NSDate().timeIntervalSince1970)
             
@@ -163,7 +169,7 @@ extension DetailViewController {
                 }
             }, errorHandler: { (error) in
                 if error != nil {
-//                    print("This is Post spot Error --->", error ?? "")
+
                     DispatchQueue.main.async {
                         SVProgressHUD.dismiss()
 
@@ -207,19 +213,22 @@ extension DetailViewController: MKMapViewDelegate {
     
     func mapView(_ mapView: MKMapView, didUpdate userLocation: MKUserLocation) {
        
+        self.currentLocation = userLocation
+        self.spotLocation = userLocation.coordinate
+        
         if !updateFlag {
             updateFlag = true
-            self.currentLocation = userLocation
-            self.spotLocation = userLocation.coordinate
             
             let center = CLLocationCoordinate2D(latitude: userLocation.coordinate.latitude, longitude: userLocation.coordinate.longitude)
-            let span = MKCoordinateSpanMake(0.01, 0.01)
+            let span = MKCoordinateSpanMake(0.005, 0.005)
             let region = MKCoordinateRegion(center: center, span: span)
             self.mapView.setRegion(region, animated: true)
             
             let spot_mark = MKPointAnnotation()
             spot_mark.coordinate = userLocation.coordinate
             self.mapView.addAnnotation(spot_mark)
+            
+//            mapView.showsUserLocation = false
         }
     }
 
@@ -234,6 +243,7 @@ extension DetailViewController: MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         
         if annotation is MKUserLocation {
+            self.mapView.showsUserLocation = false
             return nil
         }
 
@@ -247,6 +257,7 @@ extension DetailViewController: MKMapViewDelegate {
             pinView?.annotation = annotation
         }
 
+        pinView?.canShowCallout = false
         return pinView
     }
 }

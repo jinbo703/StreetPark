@@ -92,7 +92,6 @@
 			isa = PBXGroup;
 			children = (
 				074DBE702018C71B00CFFC89 /* Models */,
-				074DBE6F2018C71400CFFC89 /* Views */,
 				074DBE6E2018C6D800CFFC89 /* Controllers */,
 				074DBE6D2018C6B600CFFC89 /* Helpers */,
 				074DBE862018C78200CFFC89 /* AppDelegate.swift */,
@@ -122,13 +121,6 @@
 				074DBE8A2018C79000CFFC89 /* DetailViewController.swift */,
 			);
 			path = Controllers;
-			sourceTree = "<group>";
-		};
-		074DBE6F2018C71400CFFC89 /* Views */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Views;
 			sourceTree = "<group>";
 		};
 		074DBE702018C71B00CFFC89 /* Models */ = {
@@ -479,7 +471,7 @@
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = KYRE73USW7;
 				INFOPLIST_FILE = StreetPark/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.realyfe.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -500,7 +492,7 @@
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = KYRE73USW7;
 				INFOPLIST_FILE = StreetPark/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.realyfe.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
