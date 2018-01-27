@@ -227,8 +227,6 @@ extension DetailViewController: MKMapViewDelegate {
             let spot_mark = MKPointAnnotation()
             spot_mark.coordinate = userLocation.coordinate
             self.mapView.addAnnotation(spot_mark)
-            
-//            mapView.showsUserLocation = false
         }
     }
 

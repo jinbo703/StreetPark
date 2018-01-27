@@ -37,6 +37,9 @@ class MyMapView: MKMapView {
 
 class HomeViewController: UIViewController {
     
+    var appDelegate = UIApplication.shared.delegate as! AppDelegate
+    var steps = [MKRouteStep]()
+    
     var mapView : MyMapView = {
         let map = MyMapView()
         return map
@@ -55,6 +58,7 @@ class HomeViewController: UIViewController {
         btn.setTitle("Mark Spot", for: .normal)
         btn.setTitleColor(UIColor.white, for: .normal)
         btn.addTarget(self, action: #selector(handleMarkSpot), for: .touchUpInside)
+        btn.isEnabled = false
         return btn
     }()
     
@@ -112,23 +116,20 @@ class HomeViewController: UIViewController {
         return btn
     }()
     
-    
     var currentLocation: MKUserLocation?
     var spot_Mark: MKPlacemark?
+    var spot_cood: CLLocationCoordinate2D?
     var swipeViewTopConstraint: NSLayoutConstraint?
     var spotInfos = [SpotInfo]()
     
     var timer_location : Timer?
     var timerFlag = true
-    var loadFlag = false
     var updateFlag = false
-    
     
     //MARK:-- ViewDidLoad
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.navigationController?.navigationBar.isHidden = true
         
         self.loadMapView()
         self.setupViews()
@@ -136,6 +137,9 @@ class HomeViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        
+        self.navigationController?.navigationBar.isHidden = true
+        
         self.timerFlag = true
         if updateFlag {
             self.getAnotations()
@@ -187,7 +191,6 @@ class HomeViewController: UIViewController {
             self.spotInfos.removeAll()
             if let pinArray = (responseDic["pin"] as? NSArray) as? [NSDictionary] {
                 
-                print("This is pinArray --->", pinArray)
                 DispatchQueue.main.async {
                     for temp in pinArray {
                         let tempSpot = SpotInfo(dictionary: temp)
@@ -223,7 +226,6 @@ class HomeViewController: UIViewController {
         
         view.addSubview(mapView)
         _ = mapView.anchor(view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
-        mapView.center = view.center
         
         view.addSubview(btn_current)
         _ = btn_current.anchor(mapView.topAnchor, left: nil, bottom: nil, right: mapView.rightAnchor, topConstant: GAP30, leftConstant: 0, bottomConstant: 0, rightConstant: GAP05, widthConstant: GAP50, heightConstant: GAP50)
@@ -292,7 +294,7 @@ class HomeViewController: UIViewController {
 }
 
 //MARK:-- CLLocationManager
-extension HomeViewController: CLLocationManagerDelegate {
+extension HomeViewController{
     
     private func loadMapView() {
         
@@ -366,6 +368,7 @@ extension HomeViewController: MKMapViewDelegate {
         
         if let sp_cood = view.annotation?.coordinate {
             self.mapView.centerCoordinate = sp_cood
+            self.spot_cood = sp_cood
             let spot_location = CLLocation(latitude: sp_cood.latitude, longitude: sp_cood.longitude)
             CLGeocoder().reverseGeocodeLocation(spot_location, completionHandler: { (clPlaceMarkers, error) in
                 if error != nil {
@@ -390,7 +393,6 @@ extension HomeViewController: MKMapViewDelegate {
             
             self.img_spot.sd_addActivityIndicator()
             self.img_spot.sd_setImage(with: URL(string: photoUrl), completed: nil)
-//            self.img_spot.loadImageUsingCacheWithUrlString(urlString: photoUrl)
             
         }
     }
@@ -459,8 +461,11 @@ extension HomeViewController {
         
         if let mark = self.spot_Mark {
             let mapItem = MKMapItem(placemark: mark)
-            let launchOption = [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving]
-            mapItem.openInMaps(launchOptions: launchOption)
+            
+            let directionVC = DirectionViewController()
+            directionVC.destination = mapItem
+            directionVC.desti_cood = self.spot_cood
+            self.navigationController?.pushViewController(directionVC, animated: true)
         }
     }
     
